@@ -13,12 +13,15 @@ basePath = '/data/TNG300-2/output' # Worst resolution TNG300
 snapshot = 99 # z = 0
 
 ## Fields needed
+# All 8 magnitudes, GroupFirstSub, Rel_R, GroupNSubs, isBCG, SubhaloGrNr.
+# Exceptions are 3d values.
 # cluster_fields = ['GroupFirstSub', 'Group_M_Crit200',  'GroupPos', 'GroupVel', 'GroupNsubs']
-cluster_fields_no_exceptions = ['GroupFirstSub', 'Group_M_Crit200', 'GroupNsubs'] # Only 1-dimensional values
-galaxies_fields = ['SubhaloFlag', 'SubhaloGrNr', 'SubhaloCM', 'SubhaloSFR', 'SubhaloMass', 'SubhaloStellarPhotometrics']
-galaxies_fields_no_exceptions = ['SubhaloGrNr', 'SubhaloSFR', 'SubhaloMass'] # Only 1-dimensional values
+cluster_fields_no_exceptions = ['GroupFirstSub', 'GroupNsubs'] # Only 1-dimensional values
+galaxies_fields = ['SubhaloFlag', 'SubhaloGrNr','SubhaloGasMetallicity', 'SubhaloCM', 'SubhaloMass', 'SubhaloStellarPhotometrics']
+galaxies_fields_no_exceptions = ['SubhaloGrNr', 'SubhaloGasMetallicity'] # Only 1-dimensional values
 
 df_fields = ['SubhaloGrNr', 'SubhaloSFR', 'SubhaloMass', 'U_Band', 'B_Band', 'V_Band', 'K_Band', 'g_Band', 'r_Band', 'i_Band', 'z_Band', 'GroupFirstSub', 'Group_M_Crit200', 'GroupNsubs']
+df_fields = ['SubhaloGrNr', 'SubhaloGasMetallicity', 'U_Band', 'B_Band', 'V_Band', 'K_Band', 'g_Band', 'r_Band', 'i_Band', 'z_Band', 'GroupFirstSub', 'GroupNsubs']
 
 ## Load all galaxies
 galaxies = il.groupcat.loadSubhalos(basePath, snapshot, fields=galaxies_fields)
@@ -87,6 +90,7 @@ for haloID in range(num_of_clusters):
         cluster_df[field] = cluster[field]
         
     ## Merge with master DataFrame
-    all_subhalos_df = all_subhalos_df.append(cluster_df, sort=False)
+    all_subhalos_df = all_subhalos_df.append(cluster_df, ignore_index=True, sort=False)
 
-print(all_subhalos_df)
+# Save as a csv file
+all_subhalos_df.to_csv("/data/TNG300-2/postprocessing/catalogs/group_099.csv")
