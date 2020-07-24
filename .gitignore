@@ -1,2 +1,4 @@
-data
+data/TNG300-2/output/
+data/TNG300-2/postprocessing/
 *.logs
+.*.swp

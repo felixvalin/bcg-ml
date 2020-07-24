@@ -3,11 +3,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import pandas as pd
+import progressbar 
+
 """
 Building a PRE-PROCESSED catalog for a set of clusters
 """
-## Base parameters 
-num_of_clusters = 10 # Starts with most massive and descending order
+## Baseparameters 
+num_of_clusters = 100000 # Starts with most massive and descending order
 basePath = '/data/TNG300-2/output' # Worst resolution TNG300
 # basePath = 'sims.illustris/Illustris-3/output'
 snapshot = 99 # z = 0
@@ -28,7 +30,7 @@ galaxies = il.groupcat.loadSubhalos(basePath, snapshot, fields=galaxies_fields)
 all_subhalos_df = pd.DataFrame(columns=df_fields)
 
 ## Load individual clusters
-for haloID in range(num_of_clusters):
+for haloID in progressbar.progressbar(range(num_of_clusters)):
     cluster = il.groupcat.loadSingle(basePath, snapshot, haloID=haloID) # Load a single complete halo
 #     cluster_member_indices = np.logical_and(galaxies['SubhaloGrNr'] == haloID, galaxies['SubhaloFlag']==1) # Checks for GroupID and for correct flag (1)
     cluster_member_indices = galaxies['SubhaloGrNr'] == haloID
@@ -38,11 +40,12 @@ for haloID in range(num_of_clusters):
     BCG = il.groupcat.loadSingle(basePath, snapshot, subhaloID=cluster['GroupFirstSub'])
     isBCG = np.zeros(cluster['GroupNsubs'])
     for i in range(cluster['GroupNsubs']-1):
-        if (BCG['SubhaloCM'] == cluster_members[2][i]).all():
+        if (BCG['SubhaloCM'] == cluster_members[3][i]).all(): # We use 3 as the index for SubhaloCM
             isBCG[i] = 1
             
-#     if np.sum(isBCG) != 1:
-#         print("Did not find a BCG for clusterID = "+haloID)
+    # if np.sum(isBCG) != 1:
+    #     print("Did not find a BCG for clusterID = "+str(haloID))
+
         
 
     ## Generate the Pandas DataFrame
@@ -93,4 +96,6 @@ for haloID in range(num_of_clusters):
     all_subhalos_df = all_subhalos_df.append(cluster_df, ignore_index=True, sort=False)
 
 # Save as a csv file
-all_subhalos_df.to_csv("/data/TNG300-2/postprocessing/catalogs/group_099.csv")
+all_subhalos_df.to_csv("/data/TNG300-2/catalogs/snap_0{}-{}_groups.csv".format(snapshot,
+                                                                              num_of_clusters))
+print(np.unique(all_subhalos_df['isBCG']))
