@@ -8,8 +8,9 @@ import progressbar
 """
 Building a PRE-PROCESSED catalog for a set of clusters
 """
+###### MAX NUM_OF_CLUSTERS = ~73000
 ## Baseparameters 
-num_of_clusters = 100000 # Starts with most massive and descending order
+num_of_clusters = 50000 # Starts with most massive and descending order
 basePath = '/data/TNG300-2/output' # Worst resolution TNG300
 # basePath = 'sims.illustris/Illustris-3/output'
 snapshot = 99 # z = 0
